@@ -11,12 +11,12 @@ export const Route = createFileRoute("/")({
       { title: "Lucky Spin Wheel — Spin & Win" },
       {
         name: "description",
-        content: "Spin the lucky wheel with 10 prizes and see where fortune lands. Admin-controlled outcomes for fair event play.",
+        content: "Spin the lucky wheel with 11 prizes and see where fortune lands. Admin-controlled outcomes for fair event play.",
       },
       { property: "og:title", content: "Lucky Spin Wheel — Spin & Win" },
       {
         property: "og:description",
-        content: "Spin the lucky wheel with 10 prizes and see where fortune lands.",
+        content: "Spin the lucky wheel with 11 prizes and see where fortune lands.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
