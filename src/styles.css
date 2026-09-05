@@ -490,3 +490,127 @@ body {
     color: var(--color-foreground);
   }
 }
+
+/* --- Spin buzzer panel --- */
+.buzzer-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(70vw, 340px);
+  aspect-ratio: 1;
+}
+
+.buzzer-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 3px dashed var(--gold);
+  opacity: 0.5;
+  animation: buzzer-ring-spin 24s linear infinite;
+}
+
+.buzzer-ring::before,
+.buzzer-ring::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: 9999px;
+  border: 1px solid oklch(0.82 0.15 88 / 0.35);
+}
+
+.buzzer-ring::after {
+  inset: -8%;
+  border-style: dotted;
+  opacity: 0.5;
+  animation: buzzer-ring-spin 40s linear infinite reverse;
+}
+
+.buzzer-ring-live {
+  animation-duration: 2.5s;
+  opacity: 1;
+}
+
+.buzzer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 62%;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  border: 6px solid var(--gold-deep);
+  background: radial-gradient(circle at 35% 28%, oklch(0.72 0.22 27), oklch(0.5 0.2 25) 62%, oklch(0.4 0.16 25));
+  color: var(--gold);
+  font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  cursor: pointer;
+  box-shadow:
+    0 14px 0 oklch(0.32 0.1 25),
+    0 22px 44px oklch(0.1 0.03 285 / 0.75),
+    0 0 60px oklch(0.62 0.2 25 / 0.35);
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    filter 0.2s ease;
+}
+
+.buzzer:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.buzzer:active:not(:disabled),
+.buzzer-pressed {
+  transform: translateY(10px);
+  box-shadow:
+    0 4px 0 oklch(0.32 0.1 25),
+    0 10px 22px oklch(0.1 0.03 285 / 0.75),
+    0 0 90px oklch(0.82 0.15 88 / 0.55);
+}
+
+.buzzer:disabled {
+  cursor: wait;
+}
+
+.buzzer-gloss {
+  position: absolute;
+  top: 8%;
+  left: 16%;
+  width: 46%;
+  height: 26%;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.45), oklch(1 0 0 / 0));
+  pointer-events: none;
+}
+
+.buzzer-icon {
+  height: 2.2rem;
+  width: 2.2rem;
+  filter: drop-shadow(0 2px 4px oklch(0.1 0.03 285 / 0.6));
+}
+
+.buzzer-label {
+  font-size: clamp(1.3rem, 4vw, 1.9rem);
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-shadow: 0 2px 6px oklch(0.1 0.03 285 / 0.6);
+}
+
+.buzzer-pressed .buzzer-label {
+  animation: buzzer-blink 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes buzzer-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes buzzer-blink {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.55;
+  }
+}
