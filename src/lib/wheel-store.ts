@@ -66,26 +66,20 @@ export async function fetchSettings(): Promise<WheelSettings> {
   return normalize(data.labels, data.forced_index, data.spin_nonce);
 }
 
-export async function saveSettings(settings: WheelSettings) {
-  const { error } = await supabase.from("wheel_settings").upsert({
-    id: ROW_ID,
-    labels: settings.labels,
-    forced_index: settings.forcedIndex,
-    updated_at: new Date().toISOString(),
+/** Save prizes/forced outcome. Requires the admin PIN — verified server-side. */
+export async function saveSettings(settings: WheelSettings, pin: string) {
+  const { data, error } = await supabase.rpc("update_wheel_settings", {
+    _pin: pin,
+    _labels: settings.labels,
+    _forced_index: settings.forcedIndex,
   });
   if (error) throw error;
+  if (data !== true) throw new Error("Incorrect admin PIN");
 }
 
 /** Ask every connected wheel to spin right now. */
 export async function triggerRemoteSpin() {
-  const current = await fetchSettings();
-  const { error } = await supabase
-    .from("wheel_settings")
-    .update({
-      spin_nonce: current.spinNonce + 1,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", ROW_ID);
+  const { error } = await supabase.rpc("request_spin");
   if (error) throw error;
 }
 
