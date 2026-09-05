@@ -25,6 +25,7 @@ function AdminPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [spinSent, setSpinSent] = useState(false);
+  const [pin, setPin] = useState("");
 
   const remoteSpin = async () => {
     setError(null);
@@ -59,10 +60,14 @@ function AdminPage() {
         labels: settings.labels.map((l, i) => (l.trim() ? l : `Prize ${i + 1}`)),
         forcedIndex: settings.forcedIndex,
         spinNonce: settings.spinNonce,
-      });
+      }, pin);
       setSaved(true);
-    } catch {
-      setError("Could not save. Check your connection and try again.");
+    } catch (e) {
+      setError(
+        e instanceof Error && e.message === "Incorrect admin PIN"
+          ? "Incorrect admin PIN. Changes were not saved."
+          : "Could not save. Check your connection and try again.",
+      );
     } finally {
       setSaving(false);
     }
