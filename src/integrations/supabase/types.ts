@@ -14,7 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      wheel_settings: {
+        Row: {
+          forced_index: number
+          id: string
+          labels: string[]
+          updated_at: string
+        }
+        Insert: {
+          forced_index?: number
+          id?: string
+          labels: string[]
+          updated_at?: string
+        }
+        Update: {
+          forced_index?: number
+          id?: string
+          labels?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
