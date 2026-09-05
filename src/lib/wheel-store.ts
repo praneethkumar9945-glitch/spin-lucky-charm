@@ -20,8 +20,8 @@ export const DEFAULT_LABELS = [
   "25%",
   "50%",
   "80%",
-  "Try Again",
-  "Mystery Box",
+  "try again",
+  "mystery box",
 ];
 
 const ROW_ID = "default";
