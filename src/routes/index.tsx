@@ -90,14 +90,9 @@ function SpinPage() {
       )}
 
       <div className="flex min-h-24 flex-col items-center gap-4">
-        <Button
-          onClick={spin}
-          disabled={spinning}
-          className="btn-spin"
-        >
-          <Sparkles className="h-5 w-5" />
-          <span>{spinning ? "Spinning…" : "Spin the Wheel"}</span>
-        </Button>
+        <p className="text-sm font-medium tracking-[0.3em] text-muted-foreground uppercase">
+          {spinning ? "Spinning…" : "Waiting for the buzzer"}
+        </p>
       </div>
 
       <div
