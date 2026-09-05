@@ -14,6 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      wheel_admin_secrets: {
+        Row: {
+          id: string
+          pin_hash: string
+        }
+        Insert: {
+          id?: string
+          pin_hash: string
+        }
+        Update: {
+          id?: string
+          pin_hash?: string
+        }
+        Relationships: []
+      }
       wheel_settings: {
         Row: {
           forced_index: number
@@ -43,7 +58,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      request_spin: { Args: never; Returns: number }
+      update_wheel_settings: {
+        Args: { _forced_index: number; _labels: string[]; _pin: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
