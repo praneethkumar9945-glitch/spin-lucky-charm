@@ -19,18 +19,21 @@ export type Database = {
           forced_index: number
           id: string
           labels: string[]
+          spin_nonce: number
           updated_at: string
         }
         Insert: {
           forced_index?: number
           id?: string
           labels: string[]
+          spin_nonce?: number
           updated_at?: string
         }
         Update: {
           forced_index?: number
           id?: string
           labels?: string[]
+          spin_nonce?: number
           updated_at?: string
         }
         Relationships: []
