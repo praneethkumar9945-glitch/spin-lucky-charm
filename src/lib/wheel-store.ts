@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export const SEGMENT_COUNT = 10;
+export const SEGMENT_COUNT = 11;
 
 export interface WheelSettings {
   labels: string[];
@@ -22,6 +22,7 @@ export const DEFAULT_LABELS = [
   "80%",
   "try again",
   "mystery box",
+  "better luck next time",
 ];
 
 const ROW_ID = "default";
