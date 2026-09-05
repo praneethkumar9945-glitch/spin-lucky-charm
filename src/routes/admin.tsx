@@ -116,7 +116,16 @@ function AdminPage() {
         <button onClick={() => setSettings((s) => ({ ...s, forcedIndex: -1 }))} className="btn-target">
           <Dices className="h-4 w-4" /> Random outcome
         </button>
-        <button onClick={save} className="btn-spin" disabled={saving || loading}>
+        <input
+          type="password"
+          value={pin}
+          onChange={(e) => setPin(e.target.value)}
+          placeholder="Admin PIN"
+          className="admin-input max-w-40"
+          aria-label="Admin PIN"
+          autoComplete="off"
+        />
+        <button onClick={save} className="btn-spin" disabled={saving || loading || !pin}>
           <Save className="h-5 w-5" /> {saving ? "Saving…" : saved ? "Saved ✓" : "Save changes"}
         </button>
       </div>
