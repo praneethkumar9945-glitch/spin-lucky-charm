@@ -1,24 +1,134 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { PartyPopper, Sparkles, Trophy } from "lucide-react";
+import { SpinWheel, targetRotationFor } from "@/components/SpinWheel";
+import { Button } from "@/components/ui/button";
+import { SEGMENT_COUNT, useWheelSettings } from "@/lib/wheel-store";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Lucky Spin Wheel — Spin & Win" },
+      {
+        name: "description",
+        content: "Spin the lucky wheel with 10 prizes and see where fortune lands. Admin-controlled outcomes for fair event play.",
+      },
+      { property: "og:title", content: "Lucky Spin Wheel — Spin & Win" },
+      {
+        property: "og:description",
+        content: "Spin the lucky wheel with 10 prizes and see where fortune lands.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: SpinPage,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function SpinPage() {
+  const { settings } = useWheelSettings();
+  const [rotation, setRotation] = useState(0);
+  const [spinning, setSpinning] = useState(false);
+  const [result, setResult] = useState<string | null>(null);
+  const rotationRef = useRef(0);
+  const [mounted, setMounted] = useState(false);
+  const spinRef = useRef<() => void>(() => {});
+  const lastNonce = useRef<number | null>(null);
+
+  useEffect(() => setMounted(true), []);
+
+
+
+
+  const spin = () => {
+    if (spinning) return;
+    setResult(null);
+    const target =
+      settings.forcedIndex >= 0
+        ? settings.forcedIndex
+        : Math.floor(Math.random() * SEGMENT_COUNT);
+    const next = targetRotationFor(target, rotationRef.current);
+    rotationRef.current = next;
+    setRotation(next);
+    setSpinning(true);
+    window.setTimeout(() => {
+      setSpinning(false);
+      setResult(settings.labels[target] ?? `Prize ${target + 1}`);
+    }, 5300);
+  };
+
+  spinRef.current = spin;
+
+  // A spin started from the admin device
+  useEffect(() => {
+    const nonce = settings.spinNonce;
+    if (lastNonce.current === null) {
+      lastNonce.current = nonce;
+      return;
+    }
+    if (nonce !== lastNonce.current) {
+      lastNonce.current = nonce;
+      spinRef.current();
+    }
+  }, [settings.spinNonce]);
+
+  const isTryAgain = result?.trim().toLowerCase() === "try again";
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 px-4 py-10">
+      <header className="text-center">
+        <p className="font-display text-sm tracking-[0.4em] text-primary uppercase">Feeling lucky?</p>
+        <h1 className="font-display mt-2 text-4xl font-black tracking-tight sm:text-6xl">
+          Lucky <span className="text-gold">Spin</span> Wheel
+        </h1>
+      </header>
+
+      {mounted ? (
+        <SpinWheel labels={settings.labels} rotation={rotation} spinning={spinning} />
+      ) : (
+        <div className="wheel-shell" aria-hidden />
+      )}
+
+      <div className="flex min-h-24 flex-col items-center gap-4">
+        <Button
+          onClick={spin}
+          disabled={spinning}
+          className="btn-spin"
+        >
+          <Sparkles className="h-5 w-5" />
+          <span>{spinning ? "Spinning…" : "Spin the Wheel"}</span>
+        </Button>
+      </div>
+
+      <div
+        className="celebration-screen"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="celebration-title"
+        hidden={!result}
+      >
+        {!isTryAgain && (
+          <div className="confetti" aria-hidden>
+            {Array.from({ length: 48 }, (_, index) => (
+              <i key={index} />
+            ))}
+          </div>
+        )}
+        <div className="celebration-content">
+          <div className="celebration-icon" aria-hidden>
+            {isTryAgain ? <PartyPopper /> : <Trophy />}
+          </div>
+          <p className="celebration-kicker">{isTryAgain ? "Almost there" : "Congratulations!"}</p>
+          <h2 id="celebration-title">
+            {isTryAgain ? "Try Again" : "You won"}
+          </h2>
+          {!isTryAgain && <p className="celebration-prize">{result ?? ""}</p>}
+          <Button className="btn-spin celebration-button" onClick={() => setResult(null)} autoFocus={Boolean(result)}>
+            <Sparkles />
+            Spin Again
+          </Button>
+        </div>
+      </div>
+    </main>
   );
 }

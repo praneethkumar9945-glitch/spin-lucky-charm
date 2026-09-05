@@ -1,0 +1,1 @@
+ALTER TABLE public.wheel_settings ADD COLUMN IF NOT EXISTS spin_nonce BIGINT NOT NULL DEFAULT 0;
